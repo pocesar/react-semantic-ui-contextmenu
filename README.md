@@ -9,7 +9,10 @@ import { ContextMenu } from 'react-semantic-ui-contextmenu'
 import { Dropdown } from 'semantic-ui-react'
 
 class MyContextMenuComponent extends React.Component {
-  menuContent = ({ close }) => (
+  divRef = React.createRef()
+  div2Ref = React.createRef()
+  
+  menuContent = ({ close, target }) => (
     <React.Fragment>
       {/* it's actually a Menu.Item with some ready-to-use functionality */}
       <ContextMenu.Item onClick={() => { doSomething().then(close) }}> 
@@ -19,6 +22,8 @@ class MyContextMenuComponent extends React.Component {
       <ContextMenu.Item onClick={close}>
         Close menu
       </ContextMenu.Item>
+      
+      {this.div2Ref === target}
       
       {/* behaves exactly like https://react.semantic-ui.com/collections/menu/#content-sub-menu */}
       <Dropdown item text='More'> 
@@ -30,15 +35,30 @@ class MyContextMenuComponent extends React.Component {
       </Dropdown>
     </React.Fragment>
   )
+
+  /* 
+  takes an array of refs, multiple items can trigger the same context menu,
+  but can trigger the open/close from outside using isOpen 
+  */
+
+  contextTargets = [this.divRef, this.div2Ref]
+  
+  onOpen = ({ target }) => {
+    console.log('context menu opened', target)
+  }
+  
+  onClose = () => {
+    console.log('context menu closed')
+  }
   
   render() {
     return (
       <div>
-        <ContextMenu for={[ this.divRef ]}>
+        <ContextMenu for={this.contextTargets} isOpen={false} onOpen={this.onOpen} onClose={this.onClose}>
           {this.menuContent}
         </ContextMenu>
-        <div ref={(_ref) => (this.divRef = _ref)}>Right click me</div>
-        {/* this could also be created using React.createRef() */}
+        <div ref={this.divRef}>Right click me</div>
+        <div ref={this.div2Ref}>Also right click me</div>
       </div>
     )
   }
