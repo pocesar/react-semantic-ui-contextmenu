@@ -23,7 +23,11 @@ class MyContextMenuComponent extends React.Component {
         Close menu
       </ContextMenu.Item>
       
-      {this.div2Ref === target}
+      {this.div2Ref.current === target ? (
+        <ContextMenu.Item>
+          This only exists in "Also right click me"
+        </ContextMenu.Item>
+      ) : null}
       
       {/* behaves exactly like https://react.semantic-ui.com/collections/menu/#content-sub-menu */}
       <Dropdown item text='More'> 
